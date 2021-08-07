@@ -8,6 +8,7 @@ const resolvers = {
             if (context.user) {
                 const userData = await User.findOne({ _id: context.user._id })
                 .select('-__v -password')
+                .populate('savedBooks')
 
                 return userData;
             }
@@ -21,17 +22,52 @@ const resolvers = {
             const user = await User.findOne({ email });
 
             if (!user) {
-                throw new AuthenticationError('Provided incorrect credentials');
+                throw new AuthenticationError('Incorrect username');
             }
 
             const authPassword = await user.isCorrectPassword(password);
 
             if (!authPassword) {
-                throw new AuthenticationError('Provided incorrect credentials');
+                throw new AuthenticationError('Incorrect password');
             }
 
             const token = signToken(user);
             return { token, user };
+        },
+
+        addUser: async (parent, args) => {
+            const user = await User.create(args);
+            const token = signToken(user)
+
+            return { user, token }
+        },
+
+        saveBook: async (parent, { content }, context) => {
+            if (context.user) {
+                const userData = await User.findOneAndUpdate(
+                    { _id: context.user._id },
+                    { $addToSet: { savedBooks: content } },
+                    { new: true, runValidators: true }
+                );
+
+                return userData;
+            }
+
+            throw new AuthenticationError('You are not logged in')
+        },
+
+        removeBook: async (parent, { bookId }, context) => {
+            if (context.user) {
+                const userData = await User.findOneAndUpdate(
+                    { _id: context.user._id },
+                    { $pull: { savedBooks: { bookId: bookId } } },
+                    { new: true, runValidators: true }
+                );
+
+                return userData;
+            }
+
+            throw new AuthenticationError('You are not logged in')
         }
     }
 }
