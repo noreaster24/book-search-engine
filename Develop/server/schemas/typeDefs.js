@@ -24,15 +24,6 @@ const typeDefs = gql`
         user: User
     }
 
-    input BookInput {
-        bookId: String
-        authors: [String]
-        description: String
-        image: String
-        link: String
-        title: String
-    }
-
     type Query {
         me: User
     }
@@ -45,5 +36,4 @@ const typeDefs = gql`
     }
 `;
 
-// export the typeDefs
 module.exports = typeDefs;
