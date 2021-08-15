@@ -14,6 +14,7 @@ https://github.com/noreaster24/book-search-engine
 * AtlasDB and Heroku were used for this application.  
 
 ![Book Search](./client/public/programImg.png)
+![Book Search](./client/public/search-results.png)
 
 ## Questions
 Please contact me if you have any questions or concerns:
